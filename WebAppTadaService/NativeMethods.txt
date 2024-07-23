@@ -1,0 +1,5 @@
+﻿DuplicateHandle
+DUPLICATE_SAME_ACCESS
+DUPLICATE_HANDLE_OPTIONS
+Beep
+MessageBeep

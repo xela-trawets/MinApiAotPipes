@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35103.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{0E510113-1E1B-40EF-BC67-66DA051530A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{68D59AAF-D798-4C37-800A-20343118E1C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp3", "ConsoleApp3\ConsoleApp3.csproj", "{4DEC170C-336B-4863-91B5-EE239F4D5A5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService1", "..\EventTestService\WorkerService1\WorkerService1.csproj", "{BC66D6E9-E404-4FA1-AE28-0B8B37366A4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBeepServiceApp", "TestBeepServiceApp\TestBeepServiceApp.csproj", "{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppTadaService", "WebAppTadaService\WebAppTadaService.csproj", "{01F32D1E-E804-4A7B-A5F4-BE1532376D24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6638B84F-4092-4253-9B9C-287161661BB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E510113-1E1B-40EF-BC67-66DA051530A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E510113-1E1B-40EF-BC67-66DA051530A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E510113-1E1B-40EF-BC67-66DA051530A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E510113-1E1B-40EF-BC67-66DA051530A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68D59AAF-D798-4C37-800A-20343118E1C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68D59AAF-D798-4C37-800A-20343118E1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68D59AAF-D798-4C37-800A-20343118E1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68D59AAF-D798-4C37-800A-20343118E1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DEC170C-336B-4863-91B5-EE239F4D5A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DEC170C-336B-4863-91B5-EE239F4D5A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DEC170C-336B-4863-91B5-EE239F4D5A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DEC170C-336B-4863-91B5-EE239F4D5A5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC66D6E9-E404-4FA1-AE28-0B8B37366A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC66D6E9-E404-4FA1-AE28-0B8B37366A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC66D6E9-E404-4FA1-AE28-0B8B37366A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC66D6E9-E404-4FA1-AE28-0B8B37366A4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01F32D1E-E804-4A7B-A5F4-BE1532376D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01F32D1E-E804-4A7B-A5F4-BE1532376D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01F32D1E-E804-4A7B-A5F4-BE1532376D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01F32D1E-E804-4A7B-A5F4-BE1532376D24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6638B84F-4092-4253-9B9C-287161661BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6638B84F-4092-4253-9B9C-287161661BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6638B84F-4092-4253-9B9C-287161661BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6638B84F-4092-4253-9B9C-287161661BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {388B2624-7156-4C7A-872C-AC0875E20F00}
+	EndGlobalSection
+EndGlobal
