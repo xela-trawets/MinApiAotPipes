@@ -94,7 +94,7 @@ namespace WorkerService1
                 new EventWaitHandleAccessRule(
                     //everyone,
                     AuthUsers,
-                    //EventWaitHandleRights.FullControl |
+                    EventWaitHandleRights.FullControl |
                     //EventWaitHandleRights.TakeOwnership |
                     EventWaitHandleRights.Synchronize |
                     EventWaitHandleRights.ReadPermissions |
@@ -106,13 +106,18 @@ namespace WorkerService1
             //mySharedMemoryCreated = new EventWaitHandle(false, EventResetMode.ManualReset, memoryMappedFileName + "_ResponseSharedMemoryCreated", out aDummy, anEventWaitHandleSecurity);
             ewhSec.AddAccessRule(rule);
             // Create the security for the WaitHandle sync logic.
-          var  myEventWaitHandleSecurity = new EventWaitHandleSecurity();
-            myEventWaitHandleSecurity.SetSecurityDescriptorSddlForm("S:(ML;;NW;;;LW)");
-            SecurityIdentifier aSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-            EventWaitHandleAccessRule anAccessRule = new EventWaitHandleAccessRule(aSid,
-                EventWaitHandleRights.Modify | EventWaitHandleRights.Synchronize,
-                AccessControlType.Allow);
-            myEventWaitHandleSecurity.AddAccessRule(anAccessRule);
+            var myEventWaitHandleSecurity = new EventWaitHandleSecurity();
+            myEventWaitHandleSecurity
+                //.SetSecurityDescriptorSddlForm("S:(ML;;NW;;;LW)");
+                .SetSecurityDescriptorSddlForm(
+                @"O:BAG:S-1-5-21-3968021590-3383948570-3069516732-1001D:(A;;0x160002;;;AU)S:(ML;;NW;;;LW)",
+            //    //"O:BAG:S-1-5-21-3968021590-3383948570-3069516732-1001D:(A;;0x1f0003;;;AU)"
+                AccessControlSections.All);
+            //SecurityIdentifier aSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            //EventWaitHandleAccessRule anAccessRule = new EventWaitHandleAccessRule(aSid,
+            //    EventWaitHandleRights.Modify | EventWaitHandleRights.Synchronize,
+            //    AccessControlType.Allow);
+            //myEventWaitHandleSecurity.AddAccessRule(anAccessRule);
 
             //SE_PRIVILEGE_ENABLED
             //            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
@@ -141,23 +146,40 @@ namespace WorkerService1
                 .Append("D:")
                 .Append(EVERYONE_CLIENT_ACE)
                 .AppendFormat(CALLER_ACE_TEMPLATE, WindowsIdentity.GetCurrent().Owner.Value)
-.Append(LOW_INTEGRITY_LABEL_SACL)
+//.Append(LOW_INTEGRITY_LABEL_SACL)
 ;
             var sddl = sb.ToString();
 
             EventWaitHandleSecurity ewhSddl = new EventWaitHandleSecurity();//
-            ewhSddl.SetSecurityDescriptorSddlForm(sddl);
+            string sx;
+            sx = ewhSec.GetSecurityDescriptorSddlForm(AccessControlSections.All);
+            Console.WriteLine("ewhSec: {0}", sx);
+            sx = sx + LOW_INTEGRITY_LABEL_SACL;
+            //ewhSddl.SetSecurityDescriptorSddlForm(sddl, AccessControlSections.All);
+            sx = ewhSddl.GetSecurityDescriptorSddlForm(AccessControlSections.All);
+            Console.WriteLine("ewhSddl: {0}", sx);
+            sx = myEventWaitHandleSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All);
+            Console.WriteLine("myEventWaitHandleSecurity: {0}", sx);
 
             TriggerEvent = EventWaitHandleAcl.Create(
                 false,
                 EventResetMode.AutoReset,
                 "Global\\UdpInputTrigger",
                 out bool createdNew,
-                //ewhSec
-                ewhSddl
+                ewhSec
+                //myEventWaitHandleSecurity
+                //ewhSddl
                 );
+            //TriggerEvent
+            //    .GetAccessControl()
+            //    .SetSecurityDescriptorSddlForm(
+            //    @"O:BAG:S-1-5-21-3968021590-3383948570-3069516732-1001D:(A;;0x160002;;;AU)S:(ML;;NW;;;LW)",
+            //    //"O:BAG:S-1-5-21-3968021590-3383948570-3069516732-1001D:(A;;0x1f0003;;;AU)"
+            //    AccessControlSections.All);
+
             InterProcessSecurity.SetLowIntegrityLevel(TriggerEvent.SafeWaitHandle);
-            Console.WriteLine("CreatedNew: {0}", createdNew);
+            sx = TriggerEvent.GetAccessControl().GetSecurityDescriptorSddlForm(AccessControlSections.All);
+            Console.WriteLine("CreatedNew: {0} {1}", createdNew, sx);
             Play.PlaySound(@"C:\Windows\Media\", "tada.Wav");
 
             //var security = new EventWaitHandleSecurity();

@@ -136,6 +136,7 @@ void CreateLowProcess(String szProcessName; String IntegritySid)
 		https://devblogs.microsoft.com/oldnewthing/20221017-00/?p=107291
         http://msdn.microsoft.com/en-us/library/bb625960.aspx
 		https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/bb625966(v=msdn.10)
+		https://learn.microsoft.com/en-us/previous-versions/bb756929(v=msdn.10)?redirectedfrom=MSDN
     */
 
     // Low integrity SID

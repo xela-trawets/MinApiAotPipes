@@ -22,11 +22,11 @@ namespace WebAppTadaService
         public static async Task Main(string[] args)
         {
             //pass json back to the caller
-            var handleTask = CliWrap.Cli.Wrap(@"c:\bin\openHandle.exe").ExecuteBufferedAsync();
-            var cliResult = await handleTask;
-            var sxResult= cliResult.StandardOutput;
-            int handle1 = cliResult.ExitCode;
-            int handle2 = int.Parse(sxResult);
+            //var handleTask = CliWrap.Cli.Wrap(@"c:\bin\openHandle.exe").ExecuteBufferedAsync();
+            //var cliResult = await handleTask;
+            //var sxResult= cliResult.StandardOutput;
+            //int handle1 = cliResult.ExitCode;
+            //int handle2 = int.Parse(sxResult);
 
             // => privilege = new Privilege("SeCreateGlobalPrivilege");
             //Privilege p = ;
@@ -39,10 +39,10 @@ namespace WebAppTadaService
             privilegeType.GetMethod("Enable").Invoke(privilege, null);
 
             //// => privilege.Enable();
-            //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
+            var privilegeGlobal = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
 
             //// => privilege.Enable();
-            //privilegeType.GetMethod("Enable").Invoke(privilege, null);
+            privilegeType.GetMethod("Enable").Invoke(privilegeGlobal, null);
 
             // =>  privilege.Revert();
             //privilegeType.GetMethod("Revert").Invoke(privilege, null);
