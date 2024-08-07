@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
+using CliWrap.Buffered;
+
 using Microsoft.Extensions.Hosting.WindowsServices;
 
 using Windows.Win32.Foundation;
@@ -17,12 +19,19 @@ namespace WebAppTadaService
     {
         //[UnsafeAccessor(UnsafeAccessorKind.Method, Name = "Enable")]
         //public static extern string GetUnsafeName(System.Security.AccessControl.Privilege privilege);
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            //pass json back to the caller
+            var handleTask = CliWrap.Cli.Wrap(@"c:\bin\openHandle.exe").ExecuteBufferedAsync();
+            var cliResult = await handleTask;
+            var sxResult= cliResult.StandardOutput;
+            int handle1 = cliResult.ExitCode;
+            int handle2 = int.Parse(sxResult);
+
             // => privilege = new Privilege("SeCreateGlobalPrivilege");
             //Privilege p = ;
             // this for .NET Core and above (you need to add the "System.Security.AccessControl" nuget package)
-//            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
+            //            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
             //System.Security.AccessControl.PrivilegeNotHeldException
 
             //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
@@ -32,7 +41,7 @@ namespace WebAppTadaService
 
             // =>  privilege.Revert();
             //privilegeType.GetMethod("Revert").Invoke(privilege, null);
-            
+
             var builder = WebApplication.CreateSlimBuilder(args);
 
             builder.Services.ConfigureHttpJsonOptions(options =>

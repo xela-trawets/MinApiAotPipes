@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService1", "..\EventT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBeepServiceApp", "TestBeepServiceApp\TestBeepServiceApp.csproj", "{4CA5A7C2-0E54-4D36-8B43-892C842EDAB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppTadaService", "WebAppTadaService\WebAppTadaService.csproj", "{01F32D1E-E804-4A7B-A5F4-BE1532376D24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppTadaService", "WebAppTadaService\WebAppTadaService.csproj", "{01F32D1E-E804-4A7B-A5F4-BE1532376D24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6638B84F-4092-4253-9B9C-287161661BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6638B84F-4092-4253-9B9C-287161661BB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWaitHandleCli", "OpenWaitHandleCli\OpenWaitHandleCli.csproj", "{10178F04-E41A-4977-956B-96623CC08ECA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{6638B84F-4092-4253-9B9C-287161661BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6638B84F-4092-4253-9B9C-287161661BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6638B84F-4092-4253-9B9C-287161661BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10178F04-E41A-4977-956B-96623CC08ECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10178F04-E41A-4977-956B-96623CC08ECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10178F04-E41A-4977-956B-96623CC08ECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10178F04-E41A-4977-956B-96623CC08ECA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
