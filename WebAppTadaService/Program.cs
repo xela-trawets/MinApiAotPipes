@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
@@ -14,8 +15,24 @@ namespace WebAppTadaService
 {
     public class Program
     {
+        //[UnsafeAccessor(UnsafeAccessorKind.Method, Name = "Enable")]
+        //public static extern string GetUnsafeName(System.Security.AccessControl.Privilege privilege);
         public static void Main(string[] args)
         {
+            // => privilege = new Privilege("SeCreateGlobalPrivilege");
+            //Privilege p = ;
+            // this for .NET Core and above (you need to add the "System.Security.AccessControl" nuget package)
+//            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
+            //System.Security.AccessControl.PrivilegeNotHeldException
+
+            //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
+
+            //// => privilege.Enable();
+            //privilegeType.GetMethod("Enable").Invoke(privilege, null);
+
+            // =>  privilege.Revert();
+            //privilegeType.GetMethod("Revert").Invoke(privilege, null);
+            
             var builder = WebApplication.CreateSlimBuilder(args);
 
             builder.Services.ConfigureHttpJsonOptions(options =>

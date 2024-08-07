@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-preview.6.24327.7" />
+  </ItemGroup>
+
 </Project>

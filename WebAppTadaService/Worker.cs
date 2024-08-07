@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace WorkerService1
 {
+    using System.ComponentModel;
     using System.Reflection.Metadata.Ecma335;
     using System.Runtime.InteropServices;
     using System.Security.AccessControl;
     using System.Security.Principal;
+    using System.Text;
 
     internal static class NativeMethods
     {
@@ -77,28 +79,79 @@ namespace WorkerService1
             //        MemoryMappedFileRights.FullControl, AccessControlType.Allow));
             //MemoryMappedFile = MemoryMappedFile.CreateOrOpen(
             //    @"Global\GAMEPAD_MMF", 1, 
-            //    MemoryMappedFileAccess.ReadWrite, 
+            //    MemoryMappedFileAccess.ReadWrite,  
             //    MemoryMappedFileOptions.None, security, 
             //    System.IO.HandleInheritability.Inheritable);
             EventWaitHandleSecurity ewhSec =
                           new EventWaitHandleSecurity();
 
+
             var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
             var AuthUsers = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
             //var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
             EventWaitHandleAccessRule rule =
-                new EventWaitHandleAccessRule(AuthUsers,
+                new EventWaitHandleAccessRule(
+                    //everyone,
+                    AuthUsers,
+                    //EventWaitHandleRights.FullControl |
+                    //EventWaitHandleRights.TakeOwnership |
                     EventWaitHandleRights.Synchronize |
+                    EventWaitHandleRights.ReadPermissions |
+                    EventWaitHandleRights.ChangePermissions |
                     EventWaitHandleRights.Modify,
                     AccessControlType.Allow);
             ewhSec.AddAccessRule(rule);
 
-            rule = new EventWaitHandleAccessRule(AuthUsers,
-                EventWaitHandleRights.ReadPermissions |
-                EventWaitHandleRights.ChangePermissions,
-                AccessControlType.Allow);
-            ewhSec.AddAccessRule(rule);
+            Version firstWindowsVersionWithManditoryLevel = new(6, 0);
+            //if (Environment.OSVersion.Version >= firstWindowsVersionWithManditoryLevel)
+            {
+                //ewhSec.SetSecurityDescriptorSddlForm("S:(ML;;;;;LW)", AccessControlSections.Audit);
+                Play.PlaySound(@"C:\Windows\Media\", "tada.Wav");
+            }
+            const string LOW_INTEGRITY_LABEL_SACL = "S:(ML;;NW;;;LW)";
+            const string EVERYONE_CLIENT_ACE = "(A;;0x12019b;;;WD)";
+            const string CALLER_ACE_TEMPLATE = "(A;;0x12019f;;;{0})";
 
+            StringBuilder sb = new StringBuilder();
+            _ =
+                sb
+                //.Append(LOW_INTEGRITY_LABEL_SACL)
+                .Append("D:")
+                .Append(EVERYONE_CLIENT_ACE)
+                .AppendFormat(CALLER_ACE_TEMPLATE, WindowsIdentity.GetCurrent().Owner.Value);
+            var sddl = sb.ToString();
+
+            EventWaitHandleSecurity ewhSddl = new EventWaitHandleSecurity();//
+            ewhSddl.SetSecurityDescriptorSddlForm(sddl);
+
+            TriggerEvent = EventWaitHandleAcl.Create(
+                false,
+                EventResetMode.AutoReset,
+                "Global\\UdpInputTrigger",
+                out bool createdNew,
+                //ewhSec
+                ewhSddl
+                );
+            InterProcessSecurity.SetLowIntegrityLevel(TriggerEvent.SafeWaitHandle);
+            Console.WriteLine("CreatedNew: {0}", createdNew);
+            Play.PlaySound(@"C:\Windows\Media\", "tada.Wav");
+
+            //var security = new EventWaitHandleSecurity();
+            //EventWaitHandleRights eventWaitHandleRights = EventWaitHandleRights.Synchronize | EventWaitHandleRights.;
+            //EventWaitHandleAuditRule auditRule =
+            //    new EventWaitHandleAuditRule(everyone,
+            //        EventWaitHandleRights.Synchronize |
+            //        EventWaitHandleRights.Modify,
+            //        AuditFlags.Success);
+            //EventWaitHandleAuditRule auditRule1 =
+            //    new EventWaitHandleAuditRule(WellKnownSidType.WinLowLabelSid,
+            //        EventWaitHandleRights.Synchronize |
+            //        EventWaitHandleRights.Modify,
+            //        AuditFlags.Success);
+            //security.AddAccessRule(
+            //    rule = new System.Security.AccessControl.AccessRule<EventWaitHandleAuditRule>(
+            ////        new SecurityIdentifier(WellKnownSidType.WorldSid, null), 
+            ////        MemoryMappedFileRights.FullControl, AccessControlType.Allow));
             // Create an EventWaitHandle object that represents
             // the system event named by the constant 'ewhName', 
             // initially signaled, with automatic reset, and with
@@ -106,15 +159,15 @@ namespace WorkerService1
             // indicates creation of the underlying system object
             // is placed in wasCreated.
             //
-            TriggerEvent =
-                new EventWaitHandle(false,
-                EventResetMode.AutoReset,
-                "Global\\UdpInputTrigger"
-                );
-            TriggerEvent.SetAccessControl(ewhSec);
+            //TriggerEvent =
+            //    new EventWaitHandle(false,
+            //    EventResetMode.AutoReset,
+            //    "Global\\UdpInputTrigger"
+            //    );
+            //TriggerEvent.SetAccessControl(ewhSec);
 #pragma warning restore CA1416 // Validate platform compatibility
             return TriggerEvent;
-        } 
+        }
         public void WaitForTrigger(CancellationToken ctInp)
         {
             //EventWaitHandleAcl
@@ -176,7 +229,7 @@ namespace WorkerService1
                 try
                 {
                     WaitForTrigger(stoppingToken);
-                   //exit 
+                    //exit 
                     await Task.Delay(10_000, stoppingToken);
 
                 }
@@ -184,6 +237,92 @@ namespace WorkerService1
                 {
                     return;
                 }
+            }
+        }
+    }
+    public static class NativeMethods1
+    {
+        public const string LOW_INTEGRITY_SSL_SACL = "S:(ML;;;;;LW)";
+
+        public static int ERROR_SUCCESS = 0x0;
+
+        public const int LABEL_SECURITY_INFORMATION = 0x00000010;
+
+        public enum SE_OBJECT_TYPE
+        {
+            SE_UNKNOWN_OBJECT_TYPE = 0,
+            SE_FILE_OBJECT,
+            SE_SERVICE,
+            SE_PRINTER,
+            SE_REGISTRY_KEY,
+            SE_LMSHARE,
+            SE_KERNEL_OBJECT,
+            SE_WINDOW_OBJECT,
+            SE_DS_OBJECT,
+            SE_DS_OBJECT_ALL,
+            SE_PROVIDER_DEFINED_OBJECT,
+            SE_WMIGUID_OBJECT,
+            SE_REGISTRY_WOW64_32KEY
+        }
+
+
+
+        [DllImport("advapi32.dll", EntryPoint = "ConvertStringSecurityDescriptorToSecurityDescriptorW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern Boolean ConvertStringSecurityDescriptorToSecurityDescriptor(
+            [MarshalAs(UnmanagedType.LPWStr)] String strSecurityDescriptor,
+            UInt32 sDRevision,
+            ref IntPtr securityDescriptor,
+            ref UInt32 securityDescriptorSize);
+
+        [DllImport("kernel32.dll", EntryPoint = "LocalFree")]
+        public static extern UInt32 LocalFree(IntPtr hMem);
+
+        [DllImport("Advapi32.dll", EntryPoint = "SetSecurityInfo")]
+        public static extern int SetSecurityInfo(SafeHandle hFileMappingObject,
+                                                    SE_OBJECT_TYPE objectType,
+                                                    Int32 securityInfo,
+                                                    IntPtr psidOwner,
+                                                    IntPtr psidGroup,
+                                                    IntPtr pDacl,
+                                                    IntPtr pSacl);
+        [DllImport("advapi32.dll", EntryPoint = "GetSecurityDescriptorSacl")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern Boolean GetSecurityDescriptorSacl(
+            IntPtr pSecurityDescriptor,
+            out IntPtr lpbSaclPresent,
+            out IntPtr pSacl,
+            out IntPtr lpbSaclDefaulted);
+    }
+
+    public class InterProcessSecurity
+    {
+
+        public static void SetLowIntegrityLevel(SafeHandle hObject)
+        {
+            IntPtr pSD = IntPtr.Zero;
+            IntPtr pSacl;
+            IntPtr lpbSaclPresent;
+            IntPtr lpbSaclDefaulted;
+            uint securityDescriptorSize = 0;
+
+            if (NativeMethods1.ConvertStringSecurityDescriptorToSecurityDescriptor(NativeMethods1.LOW_INTEGRITY_SSL_SACL, 1, ref pSD, ref securityDescriptorSize))
+            {
+                if (NativeMethods1.GetSecurityDescriptorSacl(pSD, out lpbSaclPresent, out pSacl, out lpbSaclDefaulted))
+                {
+                    var err = NativeMethods1.SetSecurityInfo(hObject,
+                                                  NativeMethods1.SE_OBJECT_TYPE.SE_KERNEL_OBJECT,
+                                                  NativeMethods1.LABEL_SECURITY_INFORMATION,
+                                                  IntPtr.Zero,
+                                                  IntPtr.Zero,
+                                                  IntPtr.Zero,
+                                                  pSacl);
+                    if (err != NativeMethods1.ERROR_SUCCESS)
+                    {
+                        throw new Win32Exception(err);
+                    }
+                }
+                NativeMethods1.LocalFree(pSD);
             }
         }
     }
