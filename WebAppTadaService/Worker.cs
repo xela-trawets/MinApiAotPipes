@@ -82,6 +82,7 @@ namespace WorkerService1
             //    MemoryMappedFileAccess.ReadWrite,  
             //    MemoryMappedFileOptions.None, security, 
             //    System.IO.HandleInheritability.Inheritable);
+            //https://github.com/ng-eneter/eneter-net/tree/master/EneterMessaging/EneterMessagingFramework/MessagingSystems/SharedMemoryMessagingSystem
             EventWaitHandleSecurity ewhSec =
                           new EventWaitHandleSecurity();
 
@@ -100,9 +101,31 @@ namespace WorkerService1
                     EventWaitHandleRights.ChangePermissions |
                     EventWaitHandleRights.Modify,
                     AccessControlType.Allow);
+            //mySharedMemoryReady = new EventWaitHandle(false, EventResetMode.AutoReset, memoryMappedFileName + "_SharedMemoryReady", out aDummy, anEventWaitHandleSecurity);
+            //mySharedMemoryFilled = new EventWaitHandle(false, EventResetMode.AutoReset, memoryMappedFileName + "_SharedMemoryFilled", out aDummy, anEventWaitHandleSecurity);
+            //mySharedMemoryCreated = new EventWaitHandle(false, EventResetMode.ManualReset, memoryMappedFileName + "_ResponseSharedMemoryCreated", out aDummy, anEventWaitHandleSecurity);
             ewhSec.AddAccessRule(rule);
+            // Create the security for the WaitHandle sync logic.
+          var  myEventWaitHandleSecurity = new EventWaitHandleSecurity();
+            myEventWaitHandleSecurity.SetSecurityDescriptorSddlForm("S:(ML;;NW;;;LW)");
+            SecurityIdentifier aSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            EventWaitHandleAccessRule anAccessRule = new EventWaitHandleAccessRule(aSid,
+                EventWaitHandleRights.Modify | EventWaitHandleRights.Synchronize,
+                AccessControlType.Allow);
+            myEventWaitHandleSecurity.AddAccessRule(anAccessRule);
+
+            //SE_PRIVILEGE_ENABLED
+            //            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
+
+            //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
+            //    LibreAutomate / Au / Api / Api.cs
+            //// => privilege.Enable();
+            //privilegeType.GetMethod("Enable").Invoke(privilege, null);
 
             Version firstWindowsVersionWithManditoryLevel = new(6, 0);
+            //  tokenPrivileges.Privileges[0].Attributes = (int)Native.SE_PRIVILEGE_ENABLED;
+            // WinApi.ConvertStringSecurityDescriptorToSecurityDescriptor ("S:(ML;;NW;;;LW)", WinApi.SDDL_REVISION_1, out sd, out sdSize);
+            //https://github.com/oleavr/ospy/blob/a7707aa64b91dfde7d90c3cc1d936515343c417d/oSpy/WinApi.cs#L401
             //if (Environment.OSVersion.Version >= firstWindowsVersionWithManditoryLevel)
             {
                 //ewhSec.SetSecurityDescriptorSddlForm("S:(ML;;;;;LW)", AccessControlSections.Audit);
@@ -115,10 +138,11 @@ namespace WorkerService1
             StringBuilder sb = new StringBuilder();
             _ =
                 sb
-                //.Append(LOW_INTEGRITY_LABEL_SACL)
                 .Append("D:")
                 .Append(EVERYONE_CLIENT_ACE)
-                .AppendFormat(CALLER_ACE_TEMPLATE, WindowsIdentity.GetCurrent().Owner.Value);
+                .AppendFormat(CALLER_ACE_TEMPLATE, WindowsIdentity.GetCurrent().Owner.Value)
+.Append(LOW_INTEGRITY_LABEL_SACL)
+;
             var sddl = sb.ToString();
 
             EventWaitHandleSecurity ewhSddl = new EventWaitHandleSecurity();//
