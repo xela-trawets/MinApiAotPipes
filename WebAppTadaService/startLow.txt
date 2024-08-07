@@ -1,0 +1,271 @@
+﻿namespace WebAppTadaService
+{
+void CreateLowProcess()
+{
+ 
+    BOOL                  fRet;
+    HANDLE                hToken        = NULL;
+    HANDLE                hNewToken     = NULL;
+    PSID                  pIntegritySid = NULL;
+    TOKEN_MANDATORY_LABEL TIL           = {0};
+    PROCESS_INFORMATION   ProcInfo      = {0};
+    STARTUPINFO           StartupInfo   = {0};
+
+ // Notepad is used as an example
+ WCHAR wszProcessName[MAX_PATH] =
+   L"C:\\Windows\\System32\\Notepad.exe";
+
+ // Low integrity SID
+ WCHAR wszIntegritySid[20] = L"S-1-16-1024";
+ PSID pIntegritySid = NULL;
+
+    fRet = OpenProcessToken(GetCurrentProcess(),
+                            TOKEN_DUPLICATE |
+                              TOKEN_ADJUST_DEFAULT |
+                              TOKEN_QUERY |
+                              TOKEN_ASSIGN_PRIMARY,
+                            &hToken);
+
+    if (!fRet)
+    {
+        goto CleanExit;
+    }
+
+    fRet = DuplicateTokenEx(hToken,
+                            0,
+                            NULL,
+                            SecurityImpersonation,
+                            TokenPrimary,
+                            &hNewToken);
+
+    if (!fRet)
+    {
+        goto CleanExit;
+    }
+
+    fRet = ConvertStringSidToSid(wszIntegritySid, &pIntegritySid);
+
+    if (!fRet)
+    {
+        goto CleanExit;
+    }
+
+    TIL.Label.Attributes = SE_GROUP_INTEGRITY;
+    TIL.Label.Sid        = pIntegritySid;
+
+    //
+    // Set the process integrity level
+    //
+
+    fRet = SetTokenInformation(hNewToken,
+                               TokenIntegrityLevel,
+                               &TIL,
+                               sizeof(TOKEN_MANDATORY_LABEL) + GetLengthSid(pIntegritySid));
+
+    if (!fRet)
+    {
+        goto CleanExit;
+    }
+
+    //
+    // Create the new process at Low integrity
+    //
+
+    fRet  = CreateProcessAsUser(hNewToken,
+                                NULL,
+                                wszProcessName,
+                                NULL,
+                                NULL,
+                                FALSE,
+                                0,
+                                NULL,
+                                NULL,
+                                &StartupInfo,
+                                &ProcInfo);
+
+CleanExit:
+
+    if (ProcInfo.hProcess != NULL)
+    {
+        CloseHandle(ProcInfo.hProcess);
+    }
+
+    if (ProcInfo.hThread != NULL)
+    {
+        CloseHandle(ProcInfo.hThread);
+    }
+
+    LocalFree(pIntegritySid);
+
+    if (hNewToken != NULL)
+    {
+        CloseHandle(hNewToken);
+    }
+
+    if (hToken != NULL)
+    {
+        CloseHandle(hToken);
+    }
+
+    return fRet;
+}
+CreateProcessWithTokenW
+GetTokenInformation
+public class startLow
+    {
+void CreateLowProcess(String szProcessName; String IntegritySid)
+{
+    hToken: THandle;
+    hNewToken: THandle;
+    szIntegritySid: WideString;
+    pIntegritySid: PSID;
+    TIL: TOKEN_MANDATORY_LABEL;
+    ProcInfo: PROCESS_INFORMATION;
+    startupInfo: TStartupInfo;
+
+    const int SE_GROUP_INTEGRITY = 0x00000020;
+    const int TokenIntegrityLevel = 25;
+
+    const String SLowIntegritySid = "S-1-16-4096";
+    const String SMediumIntegritySid = "S-1-16-8192";
+    const String SHighIntegritySid = "S-1-16-12288";
+    const String SSystemIntegritySid = "S-1-16-16384";
+
+    /*
+        Designing Applications to Run at a Low Integrity Level
+		https://devblogs.microsoft.com/oldnewthing/20221017-00/?p=107291
+        http://msdn.microsoft.com/en-us/library/bb625960.aspx
+		https://learn.microsoft.com/en-us/previous-versions/dotnet/articles/bb625966(v=msdn.10)
+    */
+
+    // Low integrity SID
+    if IntegritySid == ""
+       IntegritySid = SMediumIntegritySid;
+
+    pIntegritySid = null;
+
+    ZeroMemory(@startupInfo, sizeof(startupInfo));
+
+
+    if (!OpenProcessToken(GetCurrentProcess(), 
+          TOKEN_DUPLICATE or TOKEN_ADJUST_DEFAULT or TOKEN_QUERY or TOKEN_ASSIGN_PRIMARY, 
+          ref hToken))
+    RaiseLastWin32Error;
+    try
+        if (not DuplicateTokenEx(hToken, 0, nil, SecurityImpersonation, TokenPrimary, {var}hNewToken)) then
+            RaiseLastWin32Error;
+        try
+            if (not ConvertStringSidToSidW(PWideChar(szIntegritySid), {var}pIntegritySid)) then
+                RaiseLastWin32Error;
+            try
+                TIL._Label.Attributes := SE_GROUP_INTEGRITY;
+                TIL._Label.Sid := pIntegritySid;
+
+                // Set the process integrity level
+                if (not SetTokenInformation(hNewToken, TTokenInformationClass(TokenIntegrityLevel), @TIL,
+                        sizeof(TOKEN_MANDATORY_LABEL) + GetLengthSid(pIntegritySid))) then
+                    RaiseLastWin32Error;
+
+                //Create the new process at Low integrity
+                Result := CreateProcessAsUserW(
+                        hNewToken,
+                        nil,
+                        PWideChar(szProcessName),
+                        nil, //ProcessAttributes
+                        nil, //ThreadAttributes
+                        False, //bInheritHandles
+                        0, //dwCreationFlags
+                        nil, //lpEnvironment
+                        nil, //lpCurrentDirectory
+                        startupInfo,
+                        ProcInfo);
+            finally
+                LocalFree(Cardinal(pIntegritySid));
+            end;
+        finally
+            CloseHandle(hNewToken);
+        end;
+    finally
+        CloseHandle(hToken);
+    end;
+end;    }
+}
+ublic class ProcessSecurity : NativeObjectSecurity
+{
+    public ProcessSecurity(SafeHandle processHandle)
+        : base(false, ResourceType.KernelObject, processHandle, AccessControlSections.Access)
+    {
+
+    }
+
+    public void AddAccessRule(ProcessAccessRule rule)
+    {
+        base.AddAccessRule(rule);
+    }
+
+    // this is not a full impl- it only supports writing DACL changes
+    public void SaveChanges(SafeHandle processHandle)
+    {
+        Persist(processHandle, AccessControlSections.Access);
+    }
+
+    public override Type AccessRightType
+    {
+        get { return typeof(ProcessAccessRights); }
+    }
+
+    public override AccessRule AccessRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+    {
+        return new ProcessAccessRule(identityReference, (ProcessAccessRights)accessMask, isInherited, inheritanceFlags, propagationFlags, type);
+    }
+
+    public override Type AccessRuleType
+    {
+        get { return typeof(ProcessAccessRule); }
+    }
+
+    public override AuditRule AuditRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Type AuditRuleType
+    {
+        get { throw new NotImplementedException(); }
+    }
+}
+
+public class ProcessAccessRule : AccessRule
+{
+    public ProcessAccessRule(IdentityReference identityReference, ProcessAccessRights accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+        : base(identityReference, (int)accessMask, isInherited, inheritanceFlags, propagationFlags, type)
+    {
+    }
+
+    public ProcessAccessRights ProcessAccessRights { get { return (ProcessAccessRights)AccessMask; } }
+}
+
+[Flags]
+public enum ProcessAccessRights
+{
+    STANDARD_RIGHTS_REQUIRED = (0x000F0000),
+    DELETE = (0x00010000), // Required to delete the object. 
+    READ_CONTROL = (0x00020000), // Required to read information in the security descriptor for the object, not including the information in the SACL. To read or write the SACL, you must request the ACCESS_SYSTEM_SECURITY access right. For more information, see SACL Access Right. 
+    WRITE_DAC = (0x00040000), // Required to modify the DACL in the security descriptor for the object. 
+    WRITE_OWNER = (0x00080000), // Required to change the owner in the security descriptor for the object. 
+
+    PROCESS_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0xFFF, //All possible access rights for a process object.
+    PROCESS_CREATE_PROCESS = (0x0080), // Required to create a process. 
+    PROCESS_CREATE_THREAD = (0x0002), // Required to create a thread. 
+    PROCESS_DUP_HANDLE = (0x0040), // Required to duplicate a handle using DuplicateHandle. 
+    PROCESS_QUERY_INFORMATION = (0x0400), // Required to retrieve certain information about a process, such as its token, exit code, and priority class (see OpenProcessToken, GetExitCodeProcess, GetPriorityClass, and IsProcessInJob). 
+    PROCESS_QUERY_LIMITED_INFORMATION = (0x1000),
+    PROCESS_SET_INFORMATION = (0x0200), // Required to set certain information about a process, such as its priority class (see SetPriorityClass). 
+    PROCESS_SET_QUOTA = (0x0100), // Required to set memory limits using SetProcessWorkingSetSize. 
+    PROCESS_SUSPEND_RESUME = (0x0800), // Required to suspend or resume a process. 
+    PROCESS_TERMINATE = (0x0001), // Required to terminate a process using TerminateProcess. 
+    PROCESS_VM_OPERATION = (0x0008), // Required to perform an operation on the address space of a process (see VirtualProtectEx and WriteProcessMemory). 
+    PROCESS_VM_READ = (0x0010), // Required to read memory in a process using ReadProcessMemory. 
+    PROCESS_VM_WRITE = (0x0020), // Required to write to memory in a process using WriteProcessMemory. 
+    SYNCHRONIZE = (0x00100000), // Required to wait for the process to terminate using the wait functions. 
+}

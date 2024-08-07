@@ -79,6 +79,7 @@ namespace WebAppTadaService
 
             app.Run();
         }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         public static int DupHandleForPid(SafeHandle h, int pid)
         {
             bool result = Windows.Win32.PInvoke.DuplicateHandle(
