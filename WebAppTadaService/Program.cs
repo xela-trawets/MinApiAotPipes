@@ -34,6 +34,11 @@ namespace WebAppTadaService
             //            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
             //System.Security.AccessControl.PrivilegeNotHeldException
 
+            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
+            var privilege = Activator.CreateInstance(privilegeType, "SeSecurityPrivilege");
+            privilegeType.GetMethod("Enable").Invoke(privilege, null);
+
+            //// => privilege.Enable();
             //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
 
             //// => privilege.Enable();

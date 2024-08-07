@@ -116,7 +116,7 @@ namespace WorkerService1
 
             //SE_PRIVILEGE_ENABLED
             //            var privilegeType = Type.GetType("System.Security.AccessControl.Privilege, System.Security.AccessControl");
-
+            //SE_SECURITY_NAME
             //var privilege = Activator.CreateInstance(privilegeType, "SeCreateGlobalPrivilege");
             //    LibreAutomate / Au / Api / Api.cs
             //// => privilege.Enable();
