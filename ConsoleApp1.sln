@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppTadaService", "WebApp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6638B84F-4092-4253-9B9C-287161661BB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWaitHandleCli", "OpenWaitHandleCli\OpenWaitHandleCli.csproj", "{10178F04-E41A-4977-956B-96623CC08ECA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWaitHandleCli", "OpenWaitHandleCli\OpenWaitHandleCli.csproj", "{10178F04-E41A-4977-956B-96623CC08ECA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PulsePileUpOptimizationTest", "PulsePileUpOptimizationTest\PulsePileUpOptimizationTest.csproj", "{071BFA43-0100-4838-8CBE-CE0513E61576}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{10178F04-E41A-4977-956B-96623CC08ECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10178F04-E41A-4977-956B-96623CC08ECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10178F04-E41A-4977-956B-96623CC08ECA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071BFA43-0100-4838-8CBE-CE0513E61576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071BFA43-0100-4838-8CBE-CE0513E61576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071BFA43-0100-4838-8CBE-CE0513E61576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071BFA43-0100-4838-8CBE-CE0513E61576}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

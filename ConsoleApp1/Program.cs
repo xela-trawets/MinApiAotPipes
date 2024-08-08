@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 
-namespace ConsoleApp1
+namespace ConsoleApp1 //pulse pile-up
 {
     using TOutput = float;
     using TInput = float;
