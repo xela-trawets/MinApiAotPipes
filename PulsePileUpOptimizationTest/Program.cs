@@ -6,6 +6,25 @@ namespace PulsePileUpOptimizationTest
 {
     internal class Program
     {
+        static double FastExp0(double xd)
+        {
+            int n2p = 6;
+            float x = (float)xd;
+            float n2 = (1 << n2p);
+            x = x + x * x * 0.5f / n2 +
+                //x * x * x * 1.0f / (6 * n2 * n2) +
+                //x * x * x * x * 1.0 / (24 * n2 * n2 * n2) +
+                //x * x * x * x * x * 1.0 / (120 * n2 * n2 * n2 * n2) +
+                0;
+            x = 1 + (x / (1 << n2p));
+            for (int np = 0; np < n2p; np++)
+            {
+                x = x * x;
+            }
+            double y = x;
+            return y;
+        }
+        
         const int wTile = 128;
         const int hTile = 128;
         const int nxTile = 3;
